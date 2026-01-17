@@ -76,8 +76,17 @@ body::after{
 
 @keyframes blink{50%{opacity:0}}
 
+/* Buttons (pill) */
 .cardActions{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #111}
-.pill{padding:16px;text-align:center;font-size:9px;letter-spacing:2px;color:#aaa;text-decoration:none}
+.pill{
+  padding:16px;
+  text-align:center;
+  font-size:9px;
+  letter-spacing:2px;
+  color:#aaa;
+  text-decoration:none;
+  border-radius:0; /* <-- ensures rectangular buttons */
+}
 .pill:hover{background:#fff;color:#000}
 
 .close{position:absolute;top:10px;right:12px;background:none;border:none;color:#666;font-size:14px}
