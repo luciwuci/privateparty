@@ -55,36 +55,37 @@ const roster = [
     name: "LUCI",
     img: "luci.jpg",
     status: "i'd hate to go out that bad",
-    telegram: "https://t.me/slyett",
-    doxbin: "https://doxbin.net/user/weep"
+    telegram: "https://t.me/slyett"
   },
   {
     name: "ABEL",
     img: "abel.jpg",
     status: "you know me, but you dont know me",
-    telegram: "https://t.me/abeljohnsmith",
-    doxbin: "https://doxbin.net/user/dracula"
+    telegram: "https://t.me/abeljohnsmith"
   },
   {
     name: "LIGHT",
     img: "light.jpg",
     status: "yall niggas don’t want no problems",
-    telegram: "https://t.me/asfghasf",
-    doxbin: "https://doxbin.net/user/seem"
+    telegram: "https://t.me/asfghasf"
   },
   {
     name: "FUGU",
     img: "fugu.jpg",
     status: "im finna pull up",
-    telegram: "https://t.me/feario",
-    doxbin: null // special case to show non-clickable
+    telegram: "https://t.me/feario"
   },
   {
-    name: "REVOKE",
-    img: "revoke.jpg",
+    name: "GOTHIC",
+    img: "gothic.jpg",
     status: "sometimes i touch weep",
-    telegram: "",
-    doxbin: ""
+    telegram: ""
+  },
+  {
+    name: "LAW",
+    img: "law.jpg",
+    status: "",
+    telegram: "https://t.me/paraphrastt"
   }
 ];
 
@@ -131,15 +132,9 @@ function openModal(member) {
 
   if (member.telegram) addLink("Telegram", member.telegram);
 
-  if (member.doxbin) {
-    addLink("Doxbin", member.doxbin);
-  } else if (member.name === "FUGU") {
-    // show disabled Doxbin button for FUGU
-    const a = document.createElement("a");
-    a.className = "pill disabled";
-    a.textContent = "Doxbin";
-    actions.appendChild(a);
-  }
+  // New buttons replacing Doxbin
+  if (member.name === "LUCI") addLink("Keybase", "https://keybase.io/abductions");
+  if (member.name === "ABEL") addLink("X/Twitter", "https://x.com/abeljohnsmith");
 }
 
 function addLink(label, href){
