@@ -13,9 +13,37 @@
       pointer-events: none;
       border-left: 1px solid #333;
     }
+
+    #enterGate{
+      position:fixed;
+      inset:0;
+      background:#000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+    }
+
+    .enterText{
+      font-family:"Courier New", monospace;
+      font-size:12px;
+      letter-spacing:4px;
+      color:#f2f2f2;
+      opacity:.8;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .enterText:hover{
+      opacity:1;
+    }
   </style>
 </head>
 <body>
+
+  <div id="enterGate">
+    <div class="enterText">CLICK TO ENTER</div>
+  </div>
 
   <header class="top">
     <div class="title">PRIVATE PARTY</div>
@@ -47,42 +75,12 @@
 
 <script>
 const roster = [
-  {
-    name: "LUCI",
-    img: "luci.jpg",
-    status: "i'd hate to go out that bad",
-    telegram: "https://t.me/slyett"
-  },
-  {
-    name: "ABEL",
-    img: "abel.jpg",
-    status: "you know me, but you dont know me",
-    telegram: "https://t.me/abeljohnsmith"
-  },
-  {
-    name: "LIGHT",
-    img: "light.jpg",
-    status: "professional rapist",
-    telegram: "https://t.me/asfghasf"
-  },
-  {
-    name: "FUGU",
-    img: "fugu.jpg",
-    status: "im finna pull up",
-    telegram: "https://t.me/feario"
-  },
-  {
-    name: "GOTHIC",
-    img: "gothic.jpg",
-    status: "sometimes i touch weep",
-    telegram: ""
-  },
-  {
-    name: "LAW",
-    img: "law.jpg",
-    status: "",
-    telegram: "https://t.me/paraphrastt"
-  }
+  { name: "LUCI", img: "luci.jpg", status: "i'd hate to go out that bad", telegram: "https://t.me/slyett" },
+  { name: "ABEL", img: "abel.jpg", status: "you know me, but you dont know me", telegram: "https://t.me/abeljohnsmith" },
+  { name: "LIGHT", img: "light.jpg", status: "professional rapist", telegram: "https://t.me/asfghasf" },
+  { name: "FUGU", img: "fugu.jpg", status: "im finna pull up", telegram: "https://t.me/feario" },
+  { name: "GOTHIC", img: "gothic.jpg", status: "sometimes i touch weep", telegram: "" },
+  { name: "LAW", img: "law.jpg", status: "", telegram: "https://t.me/paraphrastt" }
 ];
 
 const rosterEl = document.getElementById("roster");
@@ -96,7 +94,7 @@ let typer;
 roster.forEach(member => {
   const tile = document.createElement("div");
   tile.className = "tile";
-  tile.style.opacity = (0.85 + Math.random() * 0.15).toFixed(2);
+  tile.style.opacity = (0.85 + Math.random()*0.15).toFixed(2);
 
   const pfp = document.createElement("div");
   pfp.className = "pfp";
@@ -125,7 +123,7 @@ function openModal(member) {
   if (member.name === "ABEL") addLink("X/Twitter", "https://x.com/abeljohnsmith");
 }
 
-function addLink(label, href) {
+function addLink(label, href){
   const a = document.createElement("a");
   a.className = "pill";
   a.href = href;
@@ -173,6 +171,14 @@ document.addEventListener("contextmenu", e => {
   e.preventDefault();
   document.body.classList.add("logged");
   setTimeout(() => document.body.classList.remove("logged"), 200);
+});
+
+const gate = document.getElementById("enterGate");
+gate.addEventListener("click", () => {
+  gate.style.display = "none";
+  const audio = document.getElementById("ambience");
+  audio.volume = 0.2;
+  audio.play().catch(() => {});
 });
 </script>
 
