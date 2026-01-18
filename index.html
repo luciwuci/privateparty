@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Additional style for disabled pill */
     .pill.disabled {
       color: #555;
       background: #111;
@@ -47,9 +46,6 @@
   </audio>
 
 <script>
-/* =====================
-   ROSTER
-===================== */
 const roster = [
   {
     name: "LUCI",
@@ -97,13 +93,10 @@ const mStatus = document.getElementById("mStatus");
 const actions = document.getElementById("actions");
 let typer;
 
-/* =====================
-   BUILD ROSTER
-===================== */
 roster.forEach(member => {
   const tile = document.createElement("div");
   tile.className = "tile";
-  tile.style.opacity = (0.85 + Math.random()*0.15).toFixed(2);
+  tile.style.opacity = (0.85 + Math.random() * 0.15).toFixed(2);
 
   const pfp = document.createElement("div");
   pfp.className = "pfp";
@@ -120,9 +113,6 @@ roster.forEach(member => {
   rosterEl.appendChild(tile);
 });
 
-/* =====================
-   MODAL
-===================== */
 function openModal(member) {
   modal.classList.add("open");
   mPfp.style.backgroundImage = `url('${member.img}')`;
@@ -131,13 +121,11 @@ function openModal(member) {
   typeStatus(member.status);
 
   if (member.telegram) addLink("Telegram", member.telegram);
-
-  // New buttons replacing Doxbin
   if (member.name === "LUCI") addLink("Keybase", "https://keybase.io/abductions");
   if (member.name === "ABEL") addLink("X/Twitter", "https://x.com/abeljohnsmith");
 }
 
-function addLink(label, href){
+function addLink(label, href) {
   const a = document.createElement("a");
   a.className = "pill";
   a.href = href;
@@ -155,9 +143,6 @@ function closeModal() {
 document.getElementById("close").onclick = closeModal;
 document.querySelector(".backdrop").onclick = closeModal;
 
-/* =====================
-   TYPING EFFECT
-===================== */
 function typeStatus(text) {
   clearInterval(typer);
   mStatus.textContent = "";
@@ -171,18 +156,12 @@ function typeStatus(text) {
   }, 60);
 }
 
-/* =====================
-   AUDIO
-===================== */
 document.body.addEventListener("click", () => {
   const audio = document.getElementById("ambience");
   audio.volume = 0.2;
   audio.play().catch(() => {});
 }, { once: true });
 
-/* =====================
-   SUBTLE FLICKER
-===================== */
 setInterval(() => {
   if (Math.random() < 0.05) {
     document.body.classList.add("flicker");
@@ -190,9 +169,6 @@ setInterval(() => {
   }
 }, 12000);
 
-/* =====================
-   RIGHT CLICK LOG
-===================== */
 document.addEventListener("contextmenu", e => {
   e.preventDefault();
   document.body.classList.add("logged");
@@ -202,4 +178,3 @@ document.addEventListener("contextmenu", e => {
 
 </body>
 </html>
-
