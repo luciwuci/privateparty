@@ -5,13 +5,14 @@
   <title>PRIVATE PARTY</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
+
   <style>
-    .pill.disabled {
-      color: #555;
-      background: #111;
-      cursor: default;
-      pointer-events: none;
-      border-left: 1px solid #333;
+    .pill.disabled{
+      color:#555;
+      background:#111;
+      cursor:default;
+      pointer-events:none;
+      border-left:1px solid #333;
     }
 
     #enterGate{
@@ -21,167 +22,214 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      z-index:9999;
+      z-index:5000;
     }
 
-    .enterText{
-      font-family:"Courier New", monospace;
+    #enterText{
+      font-family:"Courier New",monospace;
       font-size:12px;
       letter-spacing:4px;
-      color:#f2f2f2;
-      opacity:.8;
-      cursor:pointer;
-      user-select:none;
+      opacity:0;
+      animation:fadePulse 3s infinite;
     }
 
-    .enterText:hover{
-      opacity:1;
+    @keyframes fadePulse{
+      0%{opacity:0}
+      50%{opacity:1}
+      100%{opacity:0}
+    }
+
+    #enterGate.fadeOut{
+      animation:gateFade 1.2s forwards;
+    }
+
+    @keyframes gateFade{
+      to{opacity:0;pointer-events:none}
     }
   </style>
 </head>
+
 <body>
 
-  <div id="enterGate">
-    <div class="enterText">CLICK TO ENTER</div>
-  </div>
+<div id="enterGate">
+  <div id="enterText">CLICK TO ENTER</div>
+</div>
 
-  <header class="top">
-    <div class="title">PRIVATE PARTY</div>
-    <div class="subtitle">we do not condone violence</div>
-  </header>
+<header class="top">
+  <div class="title">PRIVATE PARTY</div>
+  <div class="subtitle">we do not condone violence</div>
+</header>
 
-  <main class="layout">
-    <div class="rosterGrid" id="roster"></div>
-  </main>
+<main class="layout">
+  <div class="rosterGrid" id="roster"></div>
+</main>
 
-  <div class="modal" id="modal">
-    <div class="backdrop"></div>
-    <div class="card">
-      <button class="close" id="close">×</button>
-      <div class="cardTop">
-        <div class="pfpBig" id="mPfp"></div>
-        <div class="cardName" id="mName"></div>
-        <div class="cardStatus">
-          <span id="mStatus"></span>
-        </div>
+<div class="modal" id="modal">
+  <div class="backdrop"></div>
+  <div class="card">
+    <button class="close" id="close">×</button>
+    <div class="cardTop">
+      <div class="pfpBig" id="mPfp"></div>
+      <div class="cardName" id="mName"></div>
+      <div class="cardStatus">
+        <span id="mStatus"></span>
       </div>
-      <div class="cardActions" id="actions"></div>
     </div>
+    <div class="cardActions" id="actions"></div>
   </div>
+</div>
 
-  <audio id="ambience" loop>
-    <source src="viLe.mp3" type="audio/mpeg">
-  </audio>
+<audio id="ambience" loop>
+  <source src="viLe.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 const roster = [
-  { name: "LUCI", img: "luci.jpg", status: "you know i dont fuck with the industry", telegram: "https://t.me/slyett" },
-  { name: "ABEL", img: "abel.jpg", status: "you know me, but you dont know me", telegram: "https://t.me/abeljohnsmith" },
-  { name: "LIGHT", img: "light.jpg", status: "professional rapist", telegram: "https://t.me/asfghasf" },
-  { name: "FUGU", img: "fugu.jpg", status: "im finna pull up", telegram: "https://t.me/feario" },
-  { name: "GOTHIC", img: "gothic.jpg", status: "sometimes i touch weep", telegram: "" },
-  { name: "LAW", img: "law.jpg", status: "", telegram: "https://t.me/paraphrastt" }
+  {
+    name:"LUCI",
+    img:"luci.jpg",
+    status:"i'd hate to go out that bad",
+    telegram:"https://t.me/slyett"
+  },
+  {
+    name:"ABEL",
+    img:"abel.jpg",
+    status:"you know me, but you dont know me",
+    telegram:"https://t.me/abeljohnsmith"
+  },
+  {
+    name:"LIGHT",
+    img:"light.jpg",
+    status:"professional rapist",
+    telegram:"https://t.me/asfghasf"
+  },
+  {
+    name:"FUGU",
+    img:"fugu.jpg",
+    status:"im finna pull up",
+    telegram:"https://t.me/feario"
+  },
+  {
+    name:"GOTHIC",
+    img:"gothic.jpg",
+    status:"sometimes i touch weep",
+    telegram:""
+  },
+  {
+    name:"LAW",
+    img:"law.jpg",
+    status:"",
+    telegram:"https://t.me/paraphrastt"
+  },
+  {
+    name:"KAID",
+    img:"kaid.jpg",
+    status:"im here to enjoy life",
+    telegram:"https://t.me/watchthesnowfallbeforeidie",
+    swatwiki:"https://swatwiki.org/user/xvxv"
+  },
+  {
+    name:"ILLEGAL",
+    img:"illegal.jpg",
+    status:"an eye for an eye turns the whole world blind",
+    signal:"https://signal.me/#p/+charliekirksint.01"
+  }
 ];
 
-const rosterEl = document.getElementById("roster");
-const modal = document.getElementById("modal");
-const mPfp = document.getElementById("mPfp");
-const mName = document.getElementById("mName");
-const mStatus = document.getElementById("mStatus");
-const actions = document.getElementById("actions");
+const rosterEl=document.getElementById("roster");
+const modal=document.getElementById("modal");
+const mPfp=document.getElementById("mPfp");
+const mName=document.getElementById("mName");
+const mStatus=document.getElementById("mStatus");
+const actions=document.getElementById("actions");
 let typer;
 
-roster.forEach(member => {
-  const tile = document.createElement("div");
-  tile.className = "tile";
-  tile.style.opacity = (0.85 + Math.random()*0.15).toFixed(2);
+roster.forEach(member=>{
+  const tile=document.createElement("div");
+  tile.className="tile";
+  tile.style.opacity=(0.85+Math.random()*0.15).toFixed(2);
 
-  const pfp = document.createElement("div");
-  pfp.className = "pfp";
-  pfp.style.backgroundImage = `url('${member.img}')`;
+  const pfp=document.createElement("div");
+  pfp.className="pfp";
+  pfp.style.backgroundImage=`url('${member.img}')`;
 
-  const name = document.createElement("div");
-  name.className = "name";
-  name.textContent = member.name;
+  const name=document.createElement("div");
+  name.className="name";
+  name.textContent=member.name;
 
   tile.appendChild(pfp);
   tile.appendChild(name);
-  tile.onclick = () => openModal(member);
-
+  tile.onclick=()=>openModal(member);
   rosterEl.appendChild(tile);
 });
 
-function openModal(member) {
+function openModal(member){
   modal.classList.add("open");
-  mPfp.style.backgroundImage = `url('${member.img}')`;
-  mName.textContent = member.name;
-  actions.innerHTML = "";
-  typeStatus(member.status);
+  mPfp.style.backgroundImage=`url('${member.img}')`;
+  mName.textContent=member.name;
+  actions.innerHTML="";
+  typeStatus(member.status||"");
 
-  if (member.telegram) addLink("Telegram", member.telegram);
-  if (member.name === "LUCI") addLink("Keybase", "https://keybase.io/abductions");
-  if (member.name === "ABEL") addLink("X/Twitter", "https://x.com/abeljohnsmith");
+  if(member.telegram) addLink("Telegram",member.telegram);
+  if(member.swatwiki) addLink("Swatwiki",member.swatwiki);
+  if(member.signal) addLink("Signal",member.signal);
 }
 
-function addLink(label, href){
-  const a = document.createElement("a");
-  a.className = "pill";
-  a.href = href;
-  a.target = "_blank";
-  a.textContent = label;
+function addLink(label,href){
+  const a=document.createElement("a");
+  a.className="pill";
+  a.href=href;
+  a.target="_blank";
+  a.textContent=label;
   actions.appendChild(a);
 }
 
-function closeModal() {
+function closeModal(){
   modal.classList.remove("open");
   clearInterval(typer);
-  mStatus.textContent = "";
+  mStatus.textContent="";
 }
 
-document.getElementById("close").onclick = closeModal;
-document.querySelector(".backdrop").onclick = closeModal;
+document.getElementById("close").onclick=closeModal;
+document.querySelector(".backdrop").onclick=closeModal;
 
-function typeStatus(text) {
+function typeStatus(text){
   clearInterval(typer);
-  mStatus.textContent = "";
-  let i = 0;
-  typer = setInterval(() => {
-    if (i < text.length) {
-      mStatus.textContent += text[i++];
-    } else {
-      clearInterval(typer);
-    }
-  }, 60);
+  mStatus.textContent="";
+  let i=0;
+  typer=setInterval(()=>{
+    if(i<text.length){
+      mStatus.textContent+=text[i++];
+    }else clearInterval(typer);
+  },60);
 }
 
-document.body.addEventListener("click", () => {
-  const audio = document.getElementById("ambience");
-  audio.volume = 0.2;
-  audio.play().catch(() => {});
-}, { once: true });
+document.body.addEventListener("click",()=>{
+  const audio=document.getElementById("ambience");
+  audio.volume=0.2;
+  audio.play().catch(()=>{});
+},{once:true});
 
-setInterval(() => {
-  if (Math.random() < 0.05) {
+setInterval(()=>{
+  if(Math.random()<0.05){
     document.body.classList.add("flicker");
-    setTimeout(() => document.body.classList.remove("flicker"), 80);
+    setTimeout(()=>document.body.classList.remove("flicker"),80);
   }
-}, 12000);
+},12000);
 
-document.addEventListener("contextmenu", e => {
+document.addEventListener("contextmenu",e=>{
   e.preventDefault();
   document.body.classList.add("logged");
-  setTimeout(() => document.body.classList.remove("logged"), 200);
+  setTimeout(()=>document.body.classList.remove("logged"),200);
 });
 
-const gate = document.getElementById("enterGate");
-gate.addEventListener("click", () => {
-  gate.style.display = "none";
-  const audio = document.getElementById("ambience");
-  audio.volume = 0.2;
-  audio.play().catch(() => {});
-});
+const gate=document.getElementById("enterGate");
+document.body.style.overflow="hidden";
+gate.onclick=()=>{
+  gate.classList.add("fadeOut");
+  document.body.style.overflow="auto";
+};
 </script>
 
 </body>
 </html>
-
