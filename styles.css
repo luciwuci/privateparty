@@ -34,7 +34,7 @@ body::after{
 .top{text-align:center;padding:40px 0 20px}
 .title{
   font-family: "Courier New", monospace;
-  font-size:22px;
+  font-size:26px; /* was 22px */
   letter-spacing:8px;
   font-weight:700;
   text-transform:uppercase;
@@ -43,7 +43,7 @@ body::after{
   display:inline-block;
 }
 .subtitle{
-  font-size:10px;
+  font-size:11px; /* was 10px */
   letter-spacing:2px;
   opacity:0.3;
   margin-top:4px;
@@ -95,14 +95,3 @@ body::after{
 /* Flicker and right-click flash */
 .flicker{filter:brightness(.8)}
 .logged::before{content:"access logged";position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;letter-spacing:3px;opacity:.8}
-/* subtle size adjustments */
-
-.title{
-  font-size:26px; /* was 22px */
-}
-
-.subtitle{
-  font-size:11px; /* was 10px */
-}
-
-
