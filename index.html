@@ -46,6 +46,12 @@
     @keyframes gateFade{
       to{opacity:0;pointer-events:none}
     }
+
+    /* Remove hover effect for social buttons */
+    .pill:hover {
+      background: inherit;
+      color: inherit;
+    }
   </style>
 </head>
 
@@ -155,7 +161,6 @@ roster.forEach(member=>{
   const pfp=document.createElement("div");
   pfp.className="pfp";
   pfp.style.backgroundImage=`url('${member.img}')`;
-  // force original size
   pfp.style.width="60px";
   pfp.style.height="60px";
 
@@ -172,7 +177,6 @@ roster.forEach(member=>{
 function openModal(member){
   modal.classList.add("open");
   mPfp.style.backgroundImage=`url('${member.img}')`;
-  // force original modal size
   mPfp.style.width="82px";
   mPfp.style.height="82px";
   mName.textContent=member.name;
@@ -235,7 +239,6 @@ document.addEventListener("contextmenu",e=>{
   setTimeout(()=>document.body.classList.remove("logged"),200);
 });
 
-// Enter gate
 const gate=document.getElementById("enterGate");
 document.body.style.overflow="hidden";
 gate.onclick=()=>{
