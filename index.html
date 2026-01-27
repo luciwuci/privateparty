@@ -47,10 +47,9 @@
       to{opacity:0;pointer-events:none}
     }
 
-    /* Remove hover effect for social buttons */
-    .pill:hover {
-      background: inherit;
-      color: inherit;
+    .pill:hover{
+      background:inherit;
+      color:inherit;
     }
   </style>
 </head>
@@ -63,7 +62,7 @@
 
 <header class="top">
   <div class="title">PRIVATE PARTY</div>
-  <div class="subtitle">we do not condone violence</div>
+  <div class="subtitle">WE DO NOT CONDONE VIOLENCE</div>
 </header>
 
 <main class="layout">
@@ -96,7 +95,7 @@ const roster = [
     img:"luci.jpg",
     status:"i'd hate to go out that bad",
     telegram:"https://t.me/slyett",
-    keybase:"https://keybase.io/abductions"
+    keybase:"https://keybase.io/abudctions"
   },
   {
     name:"ABEL",
@@ -112,11 +111,11 @@ const roster = [
     signal:"https://signal.me/#p/+charliekirksint.01"
   },
   {
-    name:"KAID",
-    img:"kaid.jpg",
-    status:"im here to enjoy life",
-    telegram:"https://t.me/watchthesnowfallbeforeidie",
-    swatwiki:"https://swatwiki.org/user/xvxv"
+    name:"SUSHI",
+    img:"sushi.jpg",
+    status:"i just be around",
+    telegram:"https://t.me/Bothsidesism",
+    discord:"https://discord.com/users/monitored"
   },
   {
     name:"LAW",
@@ -176,12 +175,11 @@ function openModal(member){
   actions.innerHTML="";
   typeStatus(member.status||"");
 
-  if(member.telegram) addLink("Telegram",member.telegram);
-  if(member.swatwiki) addLink("Swatwiki",member.swatwiki);
-  if(member.signal) addLink("Signal",member.signal);
-  if(member.keybase) addLink("Keybase",member.keybase);
-  if(member.xtwitter) addLink("X/Twitter",member.xtwitter);
-  if(member.wire) addLink("Wire",member.wire);
+  if(member.telegram) addLink("TELEGRAM",member.telegram);
+  if(member.keybase) addLink("KEYBASE",member.keybase);
+  if(member.xtwitter) addLink("X/TWITTER",member.xtwitter);
+  if(member.signal) addLink("SIGNAL",member.signal);
+  if(member.discord) addLink("DISCORD",member.discord);
 }
 
 function addLink(label,href){
@@ -242,4 +240,3 @@ gate.onclick=()=>{
 
 </body>
 </html>
-
