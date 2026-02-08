@@ -46,11 +46,6 @@
     @keyframes gateFade{
       to{opacity:0;pointer-events:none}
     }
-
-    .pill:hover{
-      background:inherit;
-      color:inherit;
-    }
   </style>
 </head>
 
@@ -62,7 +57,7 @@
 
 <header class="top">
   <div class="title">PRIVATE PARTY</div>
-  <div class="subtitle">WE DO NOT CONDONE VIOLENCE</div>
+  <div class="subtitle">we do not condone violence</div>
 </header>
 
 <main class="layout">
@@ -93,7 +88,7 @@ const roster = [
   {
     name:"LUCI",
     img:"luci.jpg",
-    status:"you know i dont fw the industry",
+    status:"i'd hate to go out that bad",
     telegram:"https://t.me/slyett",
     keybase:"https://keybase.io/abudctions"
   },
@@ -105,17 +100,32 @@ const roster = [
     xtwitter:"https://x.com/abeljohnsmith"
   },
   {
+    name:"KACI",
+    img:"kaci.png",
+    status:"sometimes i touch weep",
+    telegram:"https://t.me/kacixd",
+    session:"05f9c1147389440ab9720b943581626486bbda934bac8dd97b334844b7c9ae1112"
+  },
+  {
+    name:"KAID",
+    img:"kaid.jpg",
+    status:"im here to enjoy life",
+    telegram:"https://t.me/watchthesnowfallbeforeidie",
+    swatwiki:"https://swatwiki.org/user/xvxv"
+  },
+  {
+    name:"DIABLO",
+    img:"diablo.png",
+    status:"see you in valhalla",
+    telegram:"https://t.me/redtigertools",
+    xtwitter:"https://x.com/osintforums"
+  },
+  {
     name:"FUGU",
     img:"fugu.jpg",
     status:"im finna pull up",
     telegram:"https://t.me/feario"
   },
-  {
-    name:"KAID",
-    img:"kaid.jpg",
-    status:"sometimes weep touches me",
-    telegram:"https://t.me/weedfeins"
-  }
 ];
 
 const rosterEl=document.getElementById("roster");
@@ -134,8 +144,6 @@ roster.forEach(member=>{
   const pfp=document.createElement("div");
   pfp.className="pfp";
   pfp.style.backgroundImage=`url('${member.img}')`;
-  pfp.style.width="60px";
-  pfp.style.height="60px";
 
   const name=document.createElement("div");
   name.className="name";
@@ -150,8 +158,6 @@ roster.forEach(member=>{
 function openModal(member){
   modal.classList.add("open");
   mPfp.style.backgroundImage=`url('${member.img}')`;
-  mPfp.style.width="82px";
-  mPfp.style.height="82px";
   mName.textContent=member.name;
   actions.innerHTML="";
   typeStatus(member.status||"");
@@ -159,8 +165,8 @@ function openModal(member){
   if(member.telegram) addLink("TELEGRAM",member.telegram);
   if(member.keybase) addLink("KEYBASE",member.keybase);
   if(member.xtwitter) addLink("X/TWITTER",member.xtwitter);
-  if(member.signal) addLink("SIGNAL",member.signal);
-  if(member.discord) addLink("DISCORD",member.discord);
+  if(member.swatwiki) addLink("SWATWIKI",member.swatwiki);
+  if(member.session) addLink("SESSION",`SESSION ID: ${member.session}`);
 }
 
 function addLink(label,href){
@@ -221,6 +227,3 @@ gate.onclick=()=>{
 
 </body>
 </html>
-
-
-
