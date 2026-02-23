@@ -46,6 +46,43 @@
     @keyframes gateFade{
       to{opacity:0;pointer-events:none}
     }
+
+    /* Bottom-left links */
+    .bottomLinks {
+      position:fixed;
+      bottom:10px;
+      left:10px;
+      font-family:'Courier New', monospace;
+      font-size:14px;
+      color:#aaa;
+      line-height:1.5;
+      user-select:text;
+    }
+
+    .bottomLinks a {
+      color:#aaa;
+      text-decoration:none;
+      display:block;
+      margin-bottom:3px;
+      transition:0.2s all;
+    }
+
+    .bottomLinks a:hover {
+      text-decoration:underline;
+      text-decoration-color:#fff; /* white underline on hover */
+    }
+
+    /* Remove hover highlight on roster tiles */
+    .tile:hover {
+      transform:scale(1.03); /* subtle scale only */
+    }
+
+    /* Remove white highlight on social pills */
+    .pill:hover {
+      background:#222;
+      color:#aaa;
+      transform:none;
+    }
   </style>
 </head>
 
@@ -83,39 +120,45 @@
   <source src="viLe.mp3" type="audio/mpeg">
 </audio>
 
+<!-- Bottom-left clickable links -->
+<div class="bottomLinks">
+  <a href="https://discord.gg/custody" target="_blank">https://discord.gg/custody</a>
+  <a href="https://t.me/publicpartys" target="_blank">https://t.me/publicpartys</a>
+</div>
+
 <script>
 const roster = [
   {
     name:"LUCI",
     img:"luci.jpg",
     status:"i'd hate to go out that bad",
-    telegram:"https://t.me/slyett",
+    telegram:"https://t.me/disease",
     keybase:"https://keybase.io/abudctions"
   },
   {
-    name:"ABEL",
+    name:"LURE",
     img:"abel.jpg",
-    status:"you know me, but you dont know me",
-    telegram:"https://t.me/abeljohnsmith",
-    xtwitter:"https://x.com/abeljohnsmith"
+    status:"i miss who i was",
+    telegram:"https://t.me/lurexdhaha",
+    doxbin:"https://doxbin.com/user/lure"
   },
   {
     name:"KACI",
-    img:"kaci.jpg",
+    img:"kaci.png",
     status:"sometimes i touch weep",
     telegram:"https://t.me/kacixd",
     session:"05f9c1147389440ab9720b943581626486bbda934bac8dd97b334844b7c9ae1112"
   },
   {
-    name:"KAID",
-    img:"kaid.jpg",
-    status:"im here to enjoy life",
-    telegram:"https://t.me/watchthesnowfallbeforeidie",
-    swatwiki:"https://swatwiki.org/user/xvxv"
+    name:"INFLICT",
+    img:"inflict.jpg",
+    status:"la petite fille de la me",
+    telegram:"https://t.me/prominence",
+    doxbin:"https://doxbin.com.user/kills"
   },
   {
     name:"DIABLO",
-    img:"diablo.jpg",
+    img:"diablo.png",
     status:"see you in valhalla",
     telegram:"https://t.me/redtigertools",
     xtwitter:"https://x.com/osintforums"
@@ -164,6 +207,7 @@ function openModal(member){
 
   if(member.telegram) addLink("TELEGRAM",member.telegram);
   if(member.keybase) addLink("KEYBASE",member.keybase);
+  if(member.doxbin) addLink("DOXBIN", member.doxbin);
   if(member.xtwitter) addLink("X/TWITTER",member.xtwitter);
   if(member.swatwiki) addLink("SWATWIKI",member.swatwiki);
   if(member.session) addLink("SESSION",`SESSION ID: ${member.session}`);
@@ -227,4 +271,3 @@ gate.onclick=()=>{
 
 </body>
 </html>
-
