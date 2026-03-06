@@ -23,7 +23,6 @@ body{
     white-space:pre;
     position:relative;
 }
-/* subtle cursor trail */
 .trail{
     position:absolute;
     width:3px;
@@ -34,8 +33,6 @@ body{
     opacity:0;
     transition:opacity 0.2s;
 }
-
-/* clickable sad face */
 #sadface{
     position:fixed;
     bottom:10px;
@@ -75,7 +72,7 @@ function type(){
 }
 type();
 
-// background audio
+// background audio: starts on interaction
 const audio = document.getElementById("bgmusic");
 function startAudio(){ 
     audio.play(); 
@@ -109,8 +106,7 @@ document.addEventListener("contextmenu", e=>e.preventDefault());
 document.addEventListener("selectstart", e=>e.preventDefault());
 
 // sad face click
-const sadface = document.getElementById("sadface");
-sadface.addEventListener("click", () => {
+document.getElementById("sadface").addEventListener("click", () => {
     window.open("https://t.me/publicpartys", "_blank");
 });
 </script>
