@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>.</title>
-
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
 user-select:none;
 }
-
 body{
 background:#000;
 color:#5a5a5a;
@@ -25,15 +22,14 @@ justify-content:center;
 cursor:none;
 padding-top:40vh;
 }
-
 #text{
-font-size:1.1rem;
+font-size:1.2rem;
 letter-spacing:4px;
-opacity:.8;
+opacity:.85;
 position:relative;
-transition:transform .2s;
+white-space:pre;
+transform:translate3d(0,0,0);
 }
-
 body::before{
 content:"";
 position:fixed;
@@ -44,7 +40,6 @@ height:100%;
 pointer-events:none;
 background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,.85) 100%);
 }
-
 body::after{
 content:"";
 position:fixed;
@@ -62,7 +57,6 @@ transparent 4px
 );
 opacity:.25;
 }
-
 .trail{
 position:absolute;
 width:2px;
@@ -71,34 +65,28 @@ background:#9a9a9a;
 pointer-events:none;
 opacity:.8;
 }
-
 .flicker{
 animation:flicker .12s linear;
 }
-
 @keyframes flicker{
 0%{opacity:.9}
 50%{opacity:.2}
 100%{opacity:.9}
 }
-
 </style>
 </head>
-
 <body>
+<div id="text">\u200B</div>
 
-<div id="text"></div>
-
-<audio autoplay loop>
-<source src="vile.mp3" type="audio/mpeg">
+<audio id="bgmusic" loop>
+<source src="Volare.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-
 const message="we never condoned violence"
 const text=document.getElementById("text")
+text.textContent="\u200B" // zero-width space avoids cursor glitch
 let i=0
-
 function type(){
 if(i<message.length){
 text.textContent+=message[i]
@@ -109,6 +97,15 @@ setTimeout(type,80+Math.random()*40)
 
 type()
 
+const audio = document.getElementById("bgmusic")
+function startAudio(){
+audio.play()
+document.removeEventListener("mousemove", startAudio)
+document.removeEventListener("click", startAudio)
+}
+document.addEventListener("mousemove", startAudio)
+document.addEventListener("click", startAudio)
+
 setInterval(()=>{
 document.body.classList.add("flicker")
 setTimeout(()=>document.body.classList.remove("flicker"),80)
@@ -116,54 +113,37 @@ setTimeout(()=>document.body.classList.remove("flicker"),80)
 
 const trail=[]
 const length=60
-
-for(let i=0;i<length;i++){
+for(let j=0;j<length;j++){
 let d=document.createElement("div")
 d.className="trail"
 document.body.appendChild(d)
 trail.push(d)
 }
-
 let t=0
-
 document.addEventListener("mousemove",e=>{
-
 let dot=trail[t]
-
 dot.style.left=e.pageX+"px"
 dot.style.top=e.pageY+"px"
 dot.style.opacity=1
-
-setTimeout(()=>{
-dot.style.opacity=0
-},400)
-
+setTimeout(()=>{dot.style.opacity=0},400)
 t=(t+1)%length
-
 let rect=text.getBoundingClientRect()
 let dx=e.clientX-(rect.left+rect.width/2)
 let dy=e.clientY-(rect.top+rect.height/2)
 let dist=Math.sqrt(dx*dx+dy*dy)
-
 if(dist<200){
 text.style.transform=`translate(${dx*0.03}px,${dy*0.03}px)`
 }else{
 text.style.transform="translate(0,0)"
 }
-
 })
-
 document.addEventListener("contextmenu",e=>e.preventDefault())
 document.addEventListener("selectstart",e=>e.preventDefault())
-
 function jitter(){
 text.style.transform=`translate(${Math.random()*2-1}px,${Math.random()*2-1}px)`
 setTimeout(()=>text.style.transform="translate(0,0)",120)
 }
-
 setInterval(jitter,3000+Math.random()*4000)
-
 </script>
-
 </body>
 </html>
