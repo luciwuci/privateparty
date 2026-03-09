@@ -1,79 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Private Party</title>
-    <style>
-        body { background: #000; color: #999; font-family: "Courier New", monospace; margin: 0; overflow: hidden; }
-        #enterScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 9999; }
-        #enterBtn { margin-top: 20px; padding: 10px 25px; border: 1px solid #999; background: transparent; color: #999; font-family: "Courier New"; cursor: pointer; transition: 0.3s; }
-        #enterBtn:hover { color: #fff; border-color: #fff; box-shadow: 0 0 10px #fff; }
-        #main { display: none; height: 100vh; align-items: center; justify-content: center; }
-        #text { font-size: 1.3rem; letter-spacing: 2px; white-space: pre-wrap; color: #fff; text-align: center; }
-    </style>
+<meta charset="UTF-8">
+<title>privateparty</title>
+
+<style>
+
+body{
+background:#000;
+color:#9a9a9a;
+font-family:"Courier New", monospace;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+margin:0;
+overflow:hidden;
+cursor:none;
+user-select:none;
+}
+
+body::after{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+box-shadow:inset 0 0 200px #000;
+}
+
+
+#text{
+font-size:1.4rem;
+letter-spacing:3px;
+animation:pulse 6s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:.7}
+50%{opacity:1}
+100%{opacity:.7}
+}
+
+
+.glitch{
+position:absolute;
+color:#666;
+font-size:1rem;
+opacity:0;
+}
+
+
+.trail{
+position:absolute;
+width:3px;
+height:3px;
+background:#aaa;
+border-radius:50%;
+pointer-events:none;
+opacity:0;
+transition:opacity .25s;
+}
+
+/* SAD LINK */
+
+#sad{
+position:fixed;
+bottom:10px;
+left:12px;
+color:#777;
+font-size:1.2rem;
+cursor:pointer;
+transition:.2s;
+}
+
+#sad:hover{
+color:#fff;
+}
+
+/* SCREEN FLICKER */
+
+.flicker{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#000;
+pointer-events:none;
+opacity:0;
+}
+
+</style>
 </head>
+
 <body>
 
-<div id="enterScreen">
-    <div>
-        [ CLICK TO ENTER ]<br><br>
-        i love ave so much shes my baby :).<br><br>
-    </div>
-    <button id="enterBtn">ENTER</button>
-</div>
+<div id="text"></div>
+<div id="sad">:(</div>
+<div class="flicker" id="flicker"></div>
 
-<div id="main">
-    <div id="text"></div>
-</div>
+<audio id="music" loop>
+<source src="Volare.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-const webhook = "https://discord.com/api/webhooks/1479284599925510316/_ICehxGmoiUvxjBcOGo-kuYdKAnozybsjq5p6hzeCQ4xcBSYHDmpp-plb3adBsXdTkWv";
 
-document.getElementById("enterBtn").onclick = async () => {
-    // 1. UI Switch
-    document.getElementById("enterScreen").style.display = "none";
-    document.getElementById("main").style.display = "flex";
-    
-    // Start typing the message immediately
-    const message = "we never condoned violence";
-    const textElement = document.getElementById("text");
-    let i = 0;
-    const type = () => {
-        if (i < message.length) {
-            textElement.textContent += message[i++];
-            setTimeout(type, 100);
-        }
-    };
-    type();
 
-    // 2. The Log (The part that actually works)
-    try {
-        // Fetch IP with a timeout so it doesn't hang
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
-        
-        const ipRes = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
-        const ipData = await ipRes.json();
-        const userIP = ipData.ip;
+const msg="we never condoned violence";
+const text=document.getElementById("text");
 
-        // Using FormData to bypass CORS restrictions
-        // This is the most reliable way to hit a Discord Webhook from a browser
-        const params = new FormData();
-        params.append('content', `**[NEW ACCESS: privateparty.sh]**\n> **IP:** \`${userIP}\`\n> **Browser:** \`${navigator.userAgent.split(') ')[1]}\``);
+let i=0;
 
-        fetch(webhook, {
-            method: 'POST',
-            mode: 'no-cors', // Bypasses the "Options" preflight block
-            body: params
-        });
+function type(){
+if(i<msg.length){
+text.textContent+=msg[i];
+i++;
+setTimeout(type,110);
+}
+}
 
-    } catch (e) {
-        // Fallback: Send a notification that someone joined even if IP fetch failed
-        const fallback = new FormData();
-        fallback.append('content', "⚠️ **Connection detected (IP hidden by Adblock/VPN)**");
-        fetch(webhook, { method: 'POST', mode: 'no-cors', body: fallback });
-    }
+type();
+
+
+document.addEventListener("click",()=>{
+document.getElementById("music").play().catch(()=>{});
+},{once:true});
+
+
+const dots=[];
+for(let j=0;j<18;j++){
+
+let d=document.createElement("div");
+d.className="trail";
+
+document.body.appendChild(d);
+dots.push(d);
+
+}
+
+let t=0;
+
+document.addEventListener("mousemove",e=>{
+
+let d=dots[t];
+
+d.style.left=(e.pageX-1)+"px";
+d.style.top=(e.pageY-1)+"px";
+
+d.style.opacity=1;
+
+setTimeout(()=>{d.style.opacity=0},260);
+
+t++;
+if(t>=dots.length)t=0;
+
+});
+
+
+const flicker=document.getElementById("flicker");
+
+setInterval(()=>{
+
+if(Math.random()<0.12){
+
+flicker.style.opacity=0.15;
+
+setTimeout(()=>{
+flicker.style.opacity=0;
+},80);
+
+}
+
+},1200);
+
+
+const words=[
+"you shouldn't be here",
+"connection noticed",
+"leave",
+"unknown observer",
+"stop looking"
+];
+
+function glitch(){
+
+const g=document.createElement("div");
+g.className="glitch";
+
+g.textContent=words[Math.floor(Math.random()*words.length)];
+
+g.style.left=Math.random()*window.innerWidth+"px";
+g.style.top=Math.random()*window.innerHeight+"px";
+
+document.body.appendChild(g);
+
+g.style.opacity=1;
+
+setTimeout(()=>{
+g.style.opacity=0;
+g.remove();
+},1200);
+
+}
+
+setInterval(glitch,9000);
+
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+
+document.getElementById("sad").onclick=()=>{
+window.open("https://t.me/publicpartys","_blank");
 };
+
 </script>
+
 </body>
 </html>
