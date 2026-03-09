@@ -5,7 +5,6 @@
 <title>privateparty</title>
 
 <style>
-
 body{
 background:#000;
 color:#9a9a9a;
@@ -32,8 +31,7 @@ pointer-events:none;
 box-shadow:inset 0 0 220px #000;
 }
 
-/* text */
-
+/* main text */
 #text{
 font-size:1.5rem;
 letter-spacing:3px;
@@ -48,22 +46,7 @@ animation:fadecycle 8s infinite;
 100%{opacity:0}
 }
 
-/* cursor trail */
-
-.trail{
-position:absolute;
-width:5px;
-height:5px;
-background:#aaa;
-border-radius:50%;
-pointer-events:none;
-opacity:0;
-transform:translate(-50%,-50%);
-transition:opacity .4s;
-}
-
 /* sad link */
-
 #sad{
 position:fixed;
 bottom:10px;
@@ -77,7 +60,6 @@ transition:.2s;
 #sad:hover{
 color:#fff;
 }
-
 </style>
 </head>
 
@@ -91,81 +73,91 @@ color:#fff;
 </audio>
 
 <script>
-
-/* start music immediately */
-
+// ===================
+// MUSIC
+// ===================
 window.addEventListener("load",()=>{
 const music=document.getElementById("music");
 music.volume=0.8;
-
-music.play().catch(()=>{
-/* some browsers block autoplay */
-});
+music.play().catch(()=>{});
 });
 
-/* improved cursor trail */
+// ===================
+// CURSOR TRAIL - NEXT LEVEL
+// ===================
 
-const trail=[];
-const trailLength=35;
+// parameters
+const trailLength = 40;
+const trailSpacing = 0.18; // smoothing factor
+const trailColor = "#aaa";
 
+// trail elements
+let trail = [];
 for(let i=0;i<trailLength;i++){
-
-const dot=document.createElement("div");
-dot.className="trail";
-
-document.body.appendChild(dot);
-trail.push(dot);
-
+    const div = document.createElement("div");
+    div.style.position="absolute";
+    div.style.width="8px";
+    div.style.height="8px";
+    div.style.borderRadius="50%";
+    div.style.pointerEvents="none";
+    div.style.background=trailColor;
+    div.style.opacity = 0;
+    div.style.transform = "translate(-50%, -50%) scale(1)";
+    document.body.appendChild(div);
+    trail.push(div);
 }
 
-let mouseX=0;
-let mouseY=0;
+// store positions
+let positions = Array(trailLength).fill({x:window.innerWidth/2, y:window.innerHeight/2});
+let mouse = {x:window.innerWidth/2, y:window.innerHeight/2};
 
-document.addEventListener("mousemove",e=>{
-mouseX=e.pageX;
-mouseY=e.pageY;
+document.addEventListener("mousemove",(e)=>{
+    mouse.x = e.pageX;
+    mouse.y = e.pageY;
 });
 
-let positions=[];
-
-for(let i=0;i<trailLength;i++){
-positions.push({x:0,y:0});
-}
-
+// animate trail
 function animateTrail(){
+    // move first point toward mouse
+    positions[0] = {
+        x: positions[0].x + (mouse.x - positions[0].x)*trailSpacing,
+        y: positions[0].y + (mouse.y - positions[0].y)*trailSpacing
+    };
 
-positions.unshift({x:mouseX,y:mouseY});
-positions.pop();
+    // each segment follows previous
+    for(let i=1;i<trailLength;i++){
+        positions[i] = {
+            x: positions[i].x + (positions[i-1].x - positions[i].x)*trailSpacing,
+            y: positions[i].y + (positions[i-1].y - positions[i].y)*trailSpacing
+        };
+    }
 
-for(let i=0;i<trail.length;i++){
+    // render
+    for(let i=0;i<trailLength;i++){
+        const p = positions[i];
+        const t = trail[i];
+        t.style.left = p.x+"px";
+        t.style.top = p.y+"px";
+        t.style.opacity = 1 - (i/trailLength); // fade tail
+        t.style.transform = `translate(-50%,-50%) scale(${1-(i/trailLength)*0.7})`;
+    }
 
-let p=positions[i];
-
-trail[i].style.left=p.x+"px";
-trail[i].style.top=p.y+"px";
-
-trail[i].style.opacity=(1-(i/trailLength));
-
-trail[i].style.transform=`translate(-50%,-50%) scale(${1-(i/trailLength)*0.7})`;
-
-}
-
-requestAnimationFrame(animateTrail);
-
+    requestAnimationFrame(animateTrail);
 }
 
 animateTrail();
 
-/* disable right click */
-
+// ===================
+// DISABLE RIGHT CLICK
+// ===================
 document.addEventListener("contextmenu",e=>e.preventDefault());
 
-/* telegram link */
-
+// ===================
+// TELEGRAM LINK
+// ===================
 document.getElementById("sad").onclick=()=>{
 window.open("https://t.me/publicpartys","_blank");
 };
-
 </script>
 
 </body>
