@@ -4,202 +4,163 @@
 <meta charset="UTF-8">
 <title>PRIVATE PARTY</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 * { margin:0; padding:0; box-sizing:border-box; user-select:none; cursor:crosshair; }
-html,body {height:100%; font-family:"Courier New", monospace; color:#f2f2f2; background:#000; overflow-x:hidden;}
-body::after {content:""; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:-1;}
+html, body { height:100%; font-family:"Courier New", monospace; color:#f2f2f2; background:#000; overflow-x:hidden; }
+body::after { content:""; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:-1; }
 ::-webkit-scrollbar { width:3px; } 
 ::-webkit-scrollbar-thumb { background:#333; }
 ::-webkit-scrollbar-track { background:#000; }
-
 #enterGate { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:5000; }
-#enterText { font-family:"Courier New", monospace; font-size:12px; letter-spacing:4px; opacity:0; animation:fadePulse 3s infinite;}
-@keyframes fadePulse {0%,100{opacity:0;}50%{opacity:1;}}
-#enterGate.fadeOut { animation:gateFade 1.2s forwards;}
+#enterText { font-family:"Courier New", monospace; font-size:12px; letter-spacing:4px; opacity:0; animation:fadePulse 3s infinite; }
+@keyframes fadePulse { 0%,100%{opacity:0;} 50%{opacity:1;} }
+#enterGate.fadeOut { animation:gateFade 1.2s forwards; }
 @keyframes gateFade { to { opacity:0; pointer-events:none; } }
-
-#fog { position:fixed; inset:0; background:url('fog.png') center/cover no-repeat; opacity:0.18; pointer-events:none; z-index:3; animation:fogMove 45s linear infinite;}
-@keyframes fogMove {0%{transform:translate(0,0);}50%{transform:translate(-15px,-10px);}100%{transform:translate(0,0);}}
-
-#mascot { 
-  position:fixed; top:0; left:50%; width:520px; height:100vh; 
-  background:url("mascot.jpg") center top no-repeat; background-size:contain; 
-  opacity:0.55; pointer-events:none; z-index:6; 
-  transform-origin: top center;
-  animation:mascotSwing 3s ease-in-out infinite;
-}
-@keyframes mascotSwing { 
-  0% { transform: rotate(-3deg); }
-  25% { transform: rotate(3deg); }
-  50% { transform: rotate(-3deg); }
-  75% { transform: rotate(3deg); }
-  100% { transform: rotate(-3deg); }
-}
-#mascot::after {
-  content:""; position:absolute; top:0; left:0; width:100%; height:100%;
-  background:url('mascot_hair.png') center top no-repeat; background-size:contain;
-  pointer-events:none; animation:hairSway 6s ease-in-out infinite alternate;
-  opacity:0.4;
-}
-@keyframes hairSway {
-  0% { transform: translateX(-2px) rotate(-1deg);}
-  50% { transform: translateX(1px) rotate(0.5deg);}
-  100% { transform: translateX(-1px) rotate(-0.5deg);}
-}
-
-.top { text-align:center; padding:40px 0 20px;}
-.title { font-size:26px; letter-spacing:8px; font-weight:700; text-transform:uppercase; }
+#mascot { position:fixed; top:0; left:50%; width:520px; height:100vh; background:url("mascot.jpg") center top no-repeat; background-size:contain; opacity:0.55; pointer-events:none; z-index:6; transform-origin: top center; animation:mascotSwing 4s ease-in-out infinite; }
+@keyframes mascotSwing { 0% { transform: rotate(-5deg); } 25% { transform: rotate(4deg); } 50% { transform: rotate(-3deg); } 75% { transform: rotate(4deg); } 100% { transform: rotate(-5deg); } }
+header { text-align:center; padding:40px 0 20px; }
+.title { font-size:26px; letter-spacing:8px; font-weight:700; text-transform:uppercase; color: #f2f2f2; }
 .subtitle { font-size:11px; letter-spacing:2px; opacity:0.25; margin-top:4px; text-transform:uppercase; }
-
+.topLinks{ position:fixed; top:20px; right:25px; font-size:11px; letter-spacing:2px; text-align:right; z-index:20; }
+.topLinks a{ display:block; color:#aaa; text-decoration:none; margin-bottom:10px; transition:0.2s; }
+.topLinks a:hover{ color:#fff; text-decoration:underline; }
 .layout { padding:40px 50px; }
 .rosterGrid { display:grid; grid-template-columns:repeat(2,70px); gap:25px 20px; position:relative; z-index:10; }
-.tile { text-align:center; transition:0.15s; cursor:pointer; }
-.tile:hover { transform:scale(1.05); filter:brightness(1.2); }
-.pfp { width:60px; height:60px; border:1px solid #222; background:#000 center/cover no-repeat; filter:grayscale(100%) contrast(1.2); }
-.name { margin-top:6px; font-size:9px; letter-spacing:2px; opacity:0.75; }
-
-.modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1000; }
+.tile { text-align:center; transition:0.3s ease; cursor:pointer; }
+.tile:hover { opacity:0.4; filter:brightness(0.5); }
+.pfp { width:60px; height:60px; border:1px solid #222; background:#000 center/cover no-repeat; filter:grayscale(100%) brightness(0.5); }
+.name { margin-top:6px; font-size:9px; letter-spacing:2px; opacity:0.75; color: #f2f2f2; }
+.modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1000; padding: 20px; }
 .modal.open { display:flex; }
-.backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.97); }
-.card { position:relative; width:320px; background:#050505; border:1px solid #111; box-shadow:0 0 70px #000; }
-.cardTop { text-align:center; padding:22px; }
-.pfpBig { width:82px;height:82px;margin:0 auto 16px;border:1px solid #333;background:center/cover no-repeat; }
-.cardName { font-size:14px; letter-spacing:5px; margin-bottom:14px; }
-.cardStatus { font-size:12px; line-height:1.5; border:1px solid #222; padding:12px; text-align:left; font-family:"Courier New", monospace; }
-.cardActions { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid #111; }
-.pill { padding:16px; text-align:center; font-size:9px; letter-spacing:2px; color:#aaa; text-decoration:none; transition:0.2s; }
-.pill:hover { background:#111; color:#aaa; }
-.close { position:absolute; top:10px; right:12px; background:none;border:none;color:#666;font-size:14px; cursor:pointer; }
-.close:hover { color:#fff; }
-
-.bottomLinks { position:fixed; bottom:10px; left:10px; font-size:14px; color:#aaa; line-height:1.5; text-decoration:underline; z-index:10; }
-.bottomLinks a { color:#aaa; text-decoration:underline; display:block; }
-
-#trailContainer { position:fixed; inset:0; pointer-events:none; z-index:1; }
-.dot { position:absolute; width:4px; height:4px; background:#fff; border-radius:50%; pointer-events:none; opacity:0.8; animation:fadeOut 1.5s forwards; }
-@keyframes fadeOut { to{opacity:0; transform:translateY(28px);} }
+.backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.9); }
+.card { position:relative; width:550px; background:#080808; border:1px solid #1a1a1a; display: flex; flex-direction: row; min-height: 260px; }
+.cardSidebar { width: 180px; padding: 30px; border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; background: #050505; align-items: center; }
+.pfpBig { width:120px; height:120px; margin-bottom:20px; border:1px solid #333; background:center/cover no-repeat; filter: grayscale(100%) contrast(1.3) brightness(0.4); }
+.cardName { font-size:18px; letter-spacing:4px; font-weight:bold; color:#f2f2f2; text-transform:uppercase; width: 100%; text-align: center; }
+.cardMain { flex: 1; display: flex; flex-direction: column; }
+.cardHeader { font-size: 9px; color: #333; letter-spacing: 3px; text-transform: uppercase; padding: 15px 25px; border-bottom: 1px solid #1a1a1a; background: #0a0a0a; }
+.cardStatus { flex: 1; font-size:11px; line-height:1.7; padding:25px; text-align:left; color:#999; font-family: "Courier New", monospace; background: #080808; }
+.cardActions { display:grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #1a1a1a; }
+.pill { padding:15px 10px; font-size:8px; letter-spacing:3px; color:#444; text-decoration:none; transition:0.2s; border-right: 1px solid #111; border-bottom: 1px solid #111; text-transform: uppercase; text-align: center; }
+.pill:hover { background:#0a0a0a; color:#fff; }
+.trail{ position:fixed; width:2px; height:2px; background:#444; pointer-events:none; z-index:10000; animation:fadeTrail 0.8s ease-out forwards; }
+@keyframes fadeTrail{ 0%{ opacity:0.8; } 100%{ opacity:0; transform: scale(0.5); } }
 </style>
 </head>
-
 <body>
-<div id="fog"></div>
-<div id="trailContainer"></div>
-<div id="enterGate"><div id="enterText">CLICK TO ENTER</div></div>
+<div id="enterGate"><div id="enterText">CLICK TO PROCEED</div></div>
 <div id="mascot"></div>
-
-<header class="top">
-  <div class="title">PRIVATE PARTY</div>
-  <div class="subtitle">WE DO NOT CONDONE VIOLENCE</div>
+<div class="topLinks">
+<a href="hoa.index.html" target="_blank">Archive</a>
+<a href="https://t.me/breachings" target="_blank">Telegram</a>
+<a href="https://doxbin.com/user/privateparty" target="_blank">Doxbin</a>
+</div>
+<header>
+<div class="title">PRIVATE PARTY</div>
+<div class="subtitle">WE DO NOT CONDONE VIOLENCE</div>
 </header>
-
 <main class="layout">
-  <div class="rosterGrid" id="roster"></div>
+<div class="rosterGrid" id="roster"></div>
 </main>
-
 <div class="modal" id="modal">
-  <div class="backdrop"></div>
-  <div class="card">
-    <button class="close" id="close">×</button>
-    <div class="cardTop">
-      <div class="pfpBig" id="mPfp"></div>
-      <div class="cardName" id="mName"></div>
-      <div class="cardStatus"><span id="mStatus"></span></div>
-    </div>
-    <div class="cardActions" id="actions"></div>
-  </div>
+<div class="backdrop"></div>
+<div class="card">
+<div class="cardSidebar">
+<div class="pfpBig" id="mPfp"></div>
+<div class="cardName" id="mName"></div>
 </div>
-
+<div class="cardMain">
+<div class="cardHeader">NODE_01 // SESSION_ACTIVE</div>
+<div class="cardStatus" id="mStatus"></div>
+<div class="cardActions" id="actions"></div>
+</div>
+</div>
+</div>
 <audio id="ambience" loop>
-  <source src="viLe.mp3" type="audio/mpeg">
+<source src="viLe.mp3" type="audio/mpeg">
 </audio>
-
-<div class="bottomLinks">
-  <a href="https://t.me/publicpartys" target="_blank">https://t.me/publicpartys</a>
-</div>
-
 <script>
 const roster = [
-  { name: "LUCI", img: "luci.jpg", status: "i'd hate to go out that bad", telegram:"https://t.me/disease", keybase:"https://keybase.io/abudctions" },
-  { name: "LURE", img: "lure.jpg", status: "i miss who i was", telegram:"https://t.me/lurexdhaha", doxbin:"https://doxbin.com/user/lure" },
-  { name: "ABEL", img: "abel.jpg", status: "sometimes i touch weep", telegram:"https://t.me/kacixd" },
-  { name: "KACI", img: "kaci.jpg", status: "2 much 2 count 4", telegram:"https://t.me/lazycat5", doxbin:"https://doxbin.com/user/kaci" },
-  { name: "DIABLO", img: "diablo.jpg", status: "why hide, when i see everything?", telegram:"https://t.me/pophole", doxbin:"https://doxbin.com/user/diablo" },
-  { name: "WEATHER", img: "weather.jpg", status: "storm incoming", telegram:"https://t.me/injued", doxbin:"https://doxbin.com/user/jure" }
+{ name: "LUCI", img: "luci.jpg", status: "i'd hate to go out that bad", telegram:"https://t.me/disease" },
+{ name: "ABEL", img: "abel.jpg", status: "sometimes i touch weep", telegram:"https://t.me/abelfh", doxbin:"https://doxbin.com/user/draculea" },
+{ name: "OCTOPUS", img: "octopus.jpg", status: "im a slut who didnt pick a status yet ffffffffffffffff", telegram:"https://t.me/saaaaaaaaaaaaaaaaaaaad1234", doxbin:"https://doxbin.com/user/lmao" },
+{ name: "DIABLO", img: "diablo.jpg", status: "wandering merchant", telegram:"https://t.me/pophole", doxbin:"https://doxbin.com/user/diablo" },
+{ name: "DOCTOR", img: "doctor.jpg", status: "im a okay guy", telegram:"https://t.me/UnofficialAgent",doxbin },
+{ name: "WEATHER", img: "weather.jpg", status: "storm incoming", telegram:"https://t.me/injued", doxbin:"https://doxbin.com/user/jure" }
 ];
-
-const rosterEl=document.getElementById("roster");
-const modal=document.getElementById("modal");
-const mPfp=document.getElementById("mPfp");
-const mName=document.getElementById("mName");
-const mStatus=document.getElementById("mStatus");
-const actions=document.getElementById("actions");
+const rosterEl = document.getElementById("roster");
+const modal = document.getElementById("modal");
+const mPfp = document.getElementById("mPfp");
+const mName = document.getElementById("mName");
+const mStatus = document.getElementById("mStatus");
+const actions = document.getElementById("actions");
+const gate = document.getElementById("enterGate");
+const audio = document.getElementById("ambience");
 let typer;
-
-roster.forEach(member=>{
-  const tile=document.createElement("div");
-  tile.className="tile";
-  tile.style.opacity=(0.85+Math.random()*0.15).toFixed(2);
-  const pfp=document.createElement("div"); pfp.className="pfp"; pfp.style.backgroundImage=`url('${member.img}')`;
-  const name=document.createElement("div"); name.className="name"; name.textContent=member.name;
-  tile.appendChild(pfp); tile.appendChild(name);
-  tile.onclick=()=>openModal(member);
-  rosterEl.appendChild(tile);
+roster.forEach(member => {
+const tile = document.createElement("div");
+tile.className = "tile";
+const pfp = document.createElement("div"); 
+pfp.className = "pfp"; 
+pfp.style.backgroundImage = `url('${member.img}')`;
+const name = document.createElement("div"); 
+name.className = "name"; 
+name.textContent = member.name;
+tile.appendChild(pfp); 
+tile.appendChild(name);
+tile.onclick = () => openModal(member);
+rosterEl.appendChild(tile);
 });
-
-function openModal(member){
-  modal.classList.add("open");
-  mPfp.style.backgroundImage=`url('${member.img}')`;
-  mName.textContent=member.name;
-  actions.innerHTML="";
-  typeStatus(member.status||"");
-  if(member.telegram) addLink("TELEGRAM",member.telegram);
-  if(member.keybase) addLink("KEYBASE",member.keybase);
-  if(member.doxbin) addLink("DOXBIN", member.doxbin);
+function openModal(m) {
+modal.classList.add("open");
+mPfp.style.backgroundImage = `url('${m.img}')`;
+mName.textContent = m.name;
+actions.innerHTML = "";
+clearInterval(typer);
+mStatus.textContent = "";
+typeStatus(m.status || "...");
+if(m.telegram) addLink("TELEGRAM", m.telegram);
+if(m.keybase) addLink("KEYBASE", m.keybase);
+if(m.doxbin) addLink("DOXBIN", m.doxbin);
+if(m.tiktok) addLink("TIKTOK", m.tiktok);
 }
-
-function addLink(label,href){
-  const a=document.createElement("a");
-  a.className="pill"; a.href=href; a.target="_blank"; a.textContent=label;
-  actions.appendChild(a);
+function addLink(l, h) { 
+const a = document.createElement("a"); 
+a.className = "pill"; 
+a.href = h; 
+a.target = "_blank"; 
+a.textContent = l; 
+actions.appendChild(a); 
 }
-
-function closeModal(){ modal.classList.remove("open"); clearInterval(typer); mStatus.textContent=""; }
-document.getElementById("close").onclick=closeModal;
-document.querySelector(".backdrop").onclick=closeModal;
-
-function typeStatus(text){
-  clearInterval(typer);
-  mStatus.textContent="";
-  let i=0;
-  typer=setInterval(()=>{
-    if(i<text.length){
-      mStatus.textContent += text[i++];
-    } else clearInterval(typer);
-  },120);
+function closeModal() { 
+modal.classList.remove("open"); 
+clearInterval(typer); 
+mStatus.textContent = ""; 
 }
-
-const gate=document.getElementById("enterGate");
-document.body.style.overflow="hidden";
-gate.onclick=()=>{
-  gate.classList.add("fadeOut");
-  document.body.style.overflow="auto";
-  const audio=document.getElementById("ambience");
-  audio.volume=0.2; audio.play().catch(()=>{});
+document.querySelector(".backdrop").onclick = closeModal;
+function typeStatus(t) {
+let i = 0;
+typer = setInterval(() => {
+if(i < t.length) {
+mStatus.textContent += t[i++];
+} else clearInterval(typer);
+}, 115);
 }
-
-document.addEventListener("contextmenu", e=>{ e.preventDefault(); });
-
-const trailContainer = document.getElementById("trailContainer");
+gate.onclick = () => {
+gate.classList.add("fadeOut");
+document.body.style.overflow = "auto";
+audio.volume = 0.2;
+audio.play().catch(() => {});
+};
+document.addEventListener("contextmenu", e => e.preventDefault());
 document.addEventListener("mousemove", e => {
-  const dot = document.createElement("div");
-  dot.className = "dot";
-  dot.style.left = e.clientX + "px";
-  dot.style.top = e.clientY + "px";
-  trailContainer.appendChild(dot);
-  setTimeout(() => dot.remove(), 1500);
+const d = document.createElement("div");
+d.className = "trail";
+d.style.left = e.clientX + "px";
+d.style.top = e.clientY + "px";
+document.body.appendChild(d);
+setTimeout(() => d.remove(), 800);
 });
 </script>
-
 </body>
 </html>
